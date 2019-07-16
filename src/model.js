@@ -3,22 +3,16 @@ window.todos = (function () {
     var state = "ALL";
     return {
         removetodo: function(r_todo){
-                //todo = todo.filter(function(obj){
-                 //   return !(obj.id === id);
-               // });
-               
           $.ajax({
                 type: "DELETE",
                 data: JSON.stringify(r_todo),
                 url: "http://localhost:3000/todos/" + r_todo.id,
                 contentType: 'application/json',
                 success: function (data) {
-                    alert(data.msg);
                     todo = data.data;
-                    window.todos.getFilteredTodos(); 
+                    window.todos.getTodos(); 
                 }
             })
-        //   localStorage.setItem('todoList',JSON.stringify(todo));
         },
 
         applyFilter: function (filterName) {
@@ -45,9 +39,6 @@ window.todos = (function () {
                     window.dispatchEvent(event);
                 }
             });
-            
-            // todo = (JSON.parse(localStorage.getItem('todoList')) || [] ) ;
-            // window.todos.getAllTodos();
         },
         add: function(name) {
             const singleTodo = {
@@ -63,43 +54,27 @@ window.todos = (function () {
                 contentType: 'application/json',
                 url: "http://localhost:3000/todos",
                 success: function (data) {
-                    alert("hhh");
-                    window.todos.getFilteredTodos();
+                    window.todos.getTodos();
                 }
             });
-
-            //todo.push(singleTodo);
-            //window.todos.getFilteredTodos();
-            // return singleTodo;
         },
         getAllTodos: function() {
-            // localStorage.setItem('todoList',JSON.stringify(todo));
-           
-           /*  const event = new Event('todoListUpdated');
-             event.todos = todo;
-            window.dispatchEvent(event);
-           $.ajax({
-                type: "POST",
-                data: JSON.stringify(todo),
-                contentType: 'application/json',
-                url: "http://localhost:3000/saveTodo",
-                success: function (data) {
-                    alert(data.msg);
-                
-                }
-            });*/
-         
-             $.ajax({
-                url: "http://localhost:3000/todos",
-                success: function (data) {
-                   // alert(data.msg);
-                    todo = data.data;
                     const event = new Event('todoListUpdated');
                     event.todos = todo;
                     window.dispatchEvent(event);
-                }
-            });
-        },
+            },
+
+        getTodos: function() {
+            $.ajax({
+               url: "http://localhost:3000/todos",
+               success: function (data) {
+                   todo = data.data;
+                   window.todos.getFilteredTodos();
+               }
+           });
+
+       },
+
         getAllActive: function() {
             var filteredTodo = todo.filter(function(todoObj) {
                 return !todoObj.isCompleted;
@@ -119,48 +94,23 @@ window.todos = (function () {
             window.dispatchEvent(event);
         },
         clearCompletedTodos: function () {
-            /*todo = todo.filter(function(todoObj) {
-                return !todoObj.isCompleted;
-            });
-
-            // localStorage.setItem('todoList',JSON.stringify(todo));
-                /*const event = new Event('todoListUpdated');
-                event.todos = state === "COMPLETED" ? [] : todo;
-                window.dispatchEvent(event);*/
-
             $.ajax({
                 type: "DELETE",
-                //data: JSON.stringify(todo),
-                //contentType: 'application/json',
                 url: "http://localhost:3000/todos/clearCompleted",
                 success: function () {
-                    //alert(data.msg);
-                    $.ajax({
-                        url: "http://localhost:3000/todos",
-                        success: function (data) {
-                           // alert(data.msg);
-                            todo = data.data;
-                             const event = new Event('todoListUpdated');
-                             event.todos = state === "COMPLETED" ? [] : todo;
-                             window.dispatchEvent(event)
-                        }
-                    });
+                    window.todos.getTodos();
                 }
             })
         },
 
-        toggleTodoState: function (id) {
-            // localStorage.setItem('todoList',JSON.stringify(todo));
-
-
+        toggleTodoState: function (todo) {
             $.ajax({
                 type: "PUT",
-                data: id,
-                //contentType: 'application/json',
+                data: JSON.stringify(todo),
+                contentType: 'application/json',
                 url: "http://localhost:3000/todos",
                 success: function () {
-                    //alert(data.msg);
-                    window.todos.getFilteredTodos();
+                    window.todos.getTodos();
                 }
             })
         }

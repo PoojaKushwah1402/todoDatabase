@@ -12,7 +12,7 @@
         input.type = "checkbox";
         input.checked = todo.isCompleted;
         input.onchange = function() {
-            window.todos.toggleTodoState(todo.id);
+            window.todos.toggleTodoState(todo);
         };
         input.className='checkboxround';
         newdiv.appendChild(input);

@@ -42,9 +42,41 @@ app.listen(port, function() {
     console.log(`Server listening on port ${port}!`);
 });
 
+
+
+
+app.delete('/todos/clearCompleted', jsonParser, function (req,res) {
+    let sql = `delete from todos where isCompleted = ?`;
+    const X = [true];
+    connection.query(sql,X, function(err,row){
+        if(err){
+            console.log("error: ", err);
+            result(err, null);
+        }
+        else{
+            const response = {
+                success: true,
+                msg: "Todo updated Successfull",
+                data: null
+            }
+          res.json(response);
+        }
+
+
+    });
+
+});
+
+
+
+
+
+
+
+
+
 app.delete("/todos/:id", jsonParser, function (req, res) {
     const itemId = [req.params.id];
-
     let sql = `delete from todos where id=?`;
  
     connection.query(sql,itemId, function(err,row){
@@ -54,7 +86,6 @@ app.delete("/todos/:id", jsonParser, function (req, res) {
         }
 
         else{
-            console.log(row);
             const response = {
                 success: true,
                 msg: "Todo deleted successfully",
@@ -71,7 +102,6 @@ app.delete("/todos/:id", jsonParser, function (req, res) {
 
 app.post("/todos",jsonParser, function(req, res) {
     const X = req.body;
-    //console.log("hello");
     const sql = `insert into todos (name,id,isCompleted) values(?,?,?)`;
     const todo = [X.name,X.id,X.isCompleted];
     connection.query(sql,todo, function(err,row){
@@ -80,7 +110,6 @@ app.post("/todos",jsonParser, function(req, res) {
             result(err, null);
         }
         else{
-            console.log(row);
             const response = {
                 success: true,
                 msg: "Todo inserted Successfull",
@@ -94,11 +123,10 @@ app.post("/todos",jsonParser, function(req, res) {
 
 
 app.put('/todos',jsonParser, function (req, res) {
-    console.log('put in toggle');
-    const X = [req.body];
+    const X = [req.body.id];
     
     let sql = `UPDATE todos
-    SET isCompleted = NOT isCompleted
+    SET isCompleted = NOT(isCompleted)
     WHERE id = ?`;
     connection.query(sql,X, function(err,row){
         if(err){
@@ -106,7 +134,6 @@ app.put('/todos',jsonParser, function (req, res) {
             result(err, null);
         }
         else{
-            console.log(row);
             const response = {
                 success: true,
                 msg: "Todo updated Successfull",
@@ -120,28 +147,6 @@ app.put('/todos',jsonParser, function (req, res) {
 
 });
 
-app.delete('/todos/clearCompleted', jsonParser, function (req, res) {
-    
-    let sql = `delete from todos where isCompleted = true`;
-    connection.query(sql, function(err,row){
-        if(err){
-            console.log("error: ", err);
-            result(err, null);
-        }
-        else{
-            console.log(row);
-            const response = {
-                success: true,
-                msg: "Todo updated Successfull",
-                data: row
-            }
-          res.json(response);
-        }
-
-
-    });
-
-});
 
 
 
@@ -149,14 +154,12 @@ app.delete('/todos/clearCompleted', jsonParser, function (req, res) {
 
 
 app.get('/todos', function (req, res) {
-    // res.setHeader('Content-Type', 'application/json');
     connection.query("select * from todos", function (err, row) {
         if(err) {
             console.log("error: ", err);
             result(err, null);
         }
         else{
-            //console.log(row[0]);
             const response = {
                 success: true,
                 msg: "Todo Fetched Successfull",
@@ -172,18 +175,3 @@ app.all('*', function (req, res) {
     res.status(500);
     res.send('Method Not found. No Api for this url.');
 });
-
-// class Response {
-//     constructor() {
-//         this.status = 200;
-//     }
-
-//     status(code)  {
-//         this.status = code;
-//         return this;
-//     }
-
-//     send() {
-//         // send
-//     }
-// }
