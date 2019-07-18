@@ -12,18 +12,18 @@
         input.type = "checkbox";
         input.checked = todo.isCompleted;
         input.onchange = function() {
-            window.todos.toggleTodoState(todo);
+            window.todos.toggleTodoState(todo.id);
         };
         input.className='checkboxround';
         newdiv.appendChild(input);
         newdiv.appendChild(smalldiv);
-        buttonfunction(smalldiv,todo);
+        buttonfunction(smalldiv,todo.id);
         return newdiv;
     }
 
-    function buttonfunction(smalldiv,todo) {
+    function buttonfunction(smalldiv,todo_id) {
         smalldiv.addEventListener("click",function(event){
-            window.todos.removetodo(todo);
+            window.todos.removetodo(todo_id);
            
         });
     }
@@ -132,7 +132,9 @@
         
 
 
-
+    window.addEventListener("load", function (){
+        window.todos.getSessiondata()
+        });
 
 
     allFilter();
@@ -143,6 +145,4 @@
     
 })();
 
-   window.addEventListener("load", function (){
-    window.todos.getSessiondata()
-    });
+   

@@ -46,18 +46,18 @@ app.listen(port, function() {
 
 
 app.delete('/todos/clearCompleted', jsonParser, function (req,res) {
-    let sql = `delete from todos where isCompleted = ?`;
-    const X = [true];
-    connection.query(sql,X, function(err,row){
+    let sql = `call clearcompleted()`;
+    connection.query(sql, function(err,row){
         if(err){
             console.log("error: ", err);
             result(err, null);
         }
         else{
+           
             const response = {
                 success: true,
                 msg: "Todo updated Successfull",
-                data: null
+                data: row
             }
           res.json(response);
         }
@@ -77,7 +77,7 @@ app.delete('/todos/clearCompleted', jsonParser, function (req,res) {
 
 app.delete("/todos/:id", jsonParser, function (req, res) {
     const itemId = [req.params.id];
-    let sql = `delete from todos where id=?`;
+    let sql = `call removetodo(?)`;
  
     connection.query(sql,itemId, function(err,row){
         if(err){
@@ -102,7 +102,7 @@ app.delete("/todos/:id", jsonParser, function (req, res) {
 
 app.post("/todos",jsonParser, function(req, res) {
     const X = req.body;
-    const sql = `insert into todos (name,id,isCompleted) values(?,?,?)`;
+    const sql = `call addtodo(?,?,?)`;
     const todo = [X.name,X.id,X.isCompleted];
     connection.query(sql,todo, function(err,row){
         if(err){
@@ -125,15 +125,14 @@ app.post("/todos",jsonParser, function(req, res) {
 app.put('/todos',jsonParser, function (req, res) {
     const X = [req.body.id];
     
-    let sql = `UPDATE todos
-    SET isCompleted = NOT(isCompleted)
-    WHERE id = ?`;
+    let sql = `call toglestate(?)`;
     connection.query(sql,X, function(err,row){
         if(err){
             console.log("error: ", err);
             result(err, null);
         }
         else{
+            console.log(row);
             const response = {
                 success: true,
                 msg: "Todo updated Successfull",
@@ -165,7 +164,6 @@ app.get('/todos', function (req, res) {
                 msg: "Todo Fetched Successfull",
                 data: row
             };
-        
             res.json(response);
         }
     });

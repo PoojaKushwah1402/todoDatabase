@@ -2,15 +2,16 @@ window.todos = (function () {
     var todo = [];
     var state = "ALL";
     return {
-        removetodo: function(r_todo){
+        removetodo: function(id){
           $.ajax({
                 type: "DELETE",
-                data: JSON.stringify(r_todo),
-                url: "http://localhost:3000/todos/" + r_todo.id,
+                data: JSON.stringify({id}),
+                url: "http://localhost:3000/todos/" + id,
                 contentType: 'application/json',
                 success: function (data) {
-                    todo = data.data;
-                    window.todos.getTodos(); 
+                    todo = data.data[0];
+                    
+                    window.todos.getFilteredTodos(); 
                 }
             })
         },
@@ -32,7 +33,6 @@ window.todos = (function () {
             $.ajax({
                 url: "http://localhost:3000/todos",
                 success: function (data) {
-                   // alert(data.msg);
                     todo = data.data;
                     const event = new Event('todoListUpdated');
                     event.todos = todo;
@@ -54,7 +54,8 @@ window.todos = (function () {
                 contentType: 'application/json',
                 url: "http://localhost:3000/todos",
                 success: function (data) {
-                    window.todos.getTodos();
+                    todo = data.data[0];
+                    window.todos.getFilteredTodos();
                 }
             });
         },
@@ -62,18 +63,7 @@ window.todos = (function () {
                     const event = new Event('todoListUpdated');
                     event.todos = todo;
                     window.dispatchEvent(event);
-            },
-
-        getTodos: function() {
-            $.ajax({
-               url: "http://localhost:3000/todos",
-               success: function (data) {
-                   todo = data.data;
-                   window.todos.getFilteredTodos();
-               }
-           });
-
-       },
+                },
 
         getAllActive: function() {
             var filteredTodo = todo.filter(function(todoObj) {
@@ -97,20 +87,22 @@ window.todos = (function () {
             $.ajax({
                 type: "DELETE",
                 url: "http://localhost:3000/todos/clearCompleted",
-                success: function () {
-                    window.todos.getTodos();
+                success: function (data) {
+                 todo = data.data[0];
+                 window.todos.getFilteredTodos();
                 }
             })
         },
 
-        toggleTodoState: function (todo) {
+        toggleTodoState: function (id) {
             $.ajax({
                 type: "PUT",
-                data: JSON.stringify(todo),
+                data: JSON.stringify({id}),
                 contentType: 'application/json',
                 url: "http://localhost:3000/todos",
-                success: function () {
-                    window.todos.getTodos();
+                success: function (data) {
+                    todo = data.data[0];
+                    window.todos.getFilteredTodos();
                 }
             })
         }
