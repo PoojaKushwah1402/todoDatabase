@@ -6,7 +6,7 @@ window.todos = (function () {
           $.ajax({
                 type: "DELETE",
                 data: JSON.stringify({id}),
-                url: "http://localhost:3000/todos/" + id,
+                url: URL+"/"+ id,
                 contentType: 'application/json',
                 success: function (data) {
                     todo = data.data[0];
@@ -31,7 +31,7 @@ window.todos = (function () {
         },
         getSessiondata: function() {
             $.ajax({
-                url: "http://localhost:3000/todos",
+                url: URL,
                 success: function (data) {
                     todo = data.data;
                     const event = new Event('todoListUpdated');
@@ -52,7 +52,7 @@ window.todos = (function () {
                 type: "POST",
                 data: JSON.stringify(singleTodo),
                 contentType: 'application/json',
-                url: "http://localhost:3000/todos",
+                url: URL,
                 success: function (data) {
                     todo = data.data[0];
                     window.todos.getFilteredTodos();
@@ -86,7 +86,7 @@ window.todos = (function () {
         clearCompletedTodos: function () {
             $.ajax({
                 type: "DELETE",
-                url: "http://localhost:3000/todos/clearCompleted",
+                url: URL+"/clearCompleted",
                 success: function (data) {
                  todo = data.data[0];
                  window.todos.getFilteredTodos();
@@ -99,7 +99,7 @@ window.todos = (function () {
                 type: "PUT",
                 data: JSON.stringify({id}),
                 contentType: 'application/json',
-                url: "http://localhost:3000/todos",
+                url: URL,
                 success: function (data) {
                     todo = data.data[0];
                     window.todos.getFilteredTodos();
