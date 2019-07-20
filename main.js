@@ -132,7 +132,6 @@ app.put('/todos',jsonParser, function (req, res) {
             result(err, null);
         }
         else{
-            console.log(row);
             const response = {
                 success: true,
                 msg: "Todo updated Successfull",
